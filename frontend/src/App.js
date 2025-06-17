@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 function App() {
   const [date, setDate] = useState('');
@@ -6,6 +6,8 @@ function App() {
   const [showPayment, setShowPayment] = useState(false);
   const [paymentDone, setPaymentDone] = useState(false);
   const [appointment, setAppointment] = useState(null);
+
+  const timeInputRef = useRef(null);
 
   const doctor = {
     name: 'Dr. M. Badarinarayan Setty',
@@ -37,6 +39,13 @@ function App() {
   const handlePayment = () => {
     // Simulate payment success here
     setPaymentDone(true);
+  };
+
+  const handleTimeChange = (e) => {
+    setTime(e.target.value);
+    if (timeInputRef.current) {
+      timeInputRef.current.blur(); // closes native time picker popup after selection
+    }
   };
 
   const today = new Date().toISOString().split('T')[0];
@@ -136,7 +145,8 @@ function App() {
               id="appointment-time"
               type="time"
               value={time}
-              onChange={(e) => setTime(e.target.value)}
+              onChange={handleTimeChange}
+              ref={timeInputRef}
               required
               style={{
                 width: '100%',
@@ -233,3 +243,4 @@ function App() {
 }
 
 export default App;
+
