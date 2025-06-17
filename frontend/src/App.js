@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 
 function App() {
   const [date, setDate] = useState('');
@@ -7,7 +7,6 @@ function App() {
   const [paymentDone, setPaymentDone] = useState(false);
   const [appointment, setAppointment] = useState(null);
 
-  const timeInputRef = useRef(null);
 
   const doctor = {
     name: 'Dr. M. Badarinarayan Setty',
@@ -41,12 +40,28 @@ function App() {
     setPaymentDone(true);
   };
 
-  const handleTimeChange = (e) => {
-    setTime(e.target.value);
-    if (timeInputRef.current) {
-      timeInputRef.current.blur(); // closes native time picker popup after selection
+  const generateTimeOptions = () => {
+    const options = [];
+    for (let hour = 9; hour <= 17; hour++) {
+      for (let min = 0; min < 60; min += 15) {
+        const hh = String(hour).padStart(2, '0');
+        const mm = String(min).padStart(2, '0');
+        options.push(
+          <option key={`${hh}:${mm}`} value={`${hh}:${mm}`}>
+            {`${hh}:${mm}`}
+          </option>
+        );
+      }
     }
+    return options;
   };
+
+  const handleEditAppointment = () => {
+    setShowPayment(false);
+    setPaymentDone(false);
+    setAppointment(null);
+  };
+
 
   const today = new Date().toISOString().split('T')[0];
   const formattedAppointmentTime = appointment
@@ -115,6 +130,7 @@ function App() {
               onChange={(e) => setDate(e.target.value)}
               min={today}
               required
+              disabled={showPayment} // 👈 disable if booking started
               style={{
                 width: '100%',
                 padding: '0.7rem',
@@ -141,13 +157,12 @@ function App() {
             >
               🕒 Select Appointment Time:
             </label>
-            <input
+            <select
               id="appointment-time"
-              type="time"
               value={time}
-              onChange={handleTimeChange}
-              ref={timeInputRef}
+              onChange={(e) => setTime(e.target.value)}
               required
+              disabled={showPayment} // 👈 disable if booking started
               style={{
                 width: '100%',
                 padding: '0.7rem',
@@ -159,7 +174,10 @@ function App() {
                 color: '#333',
                 cursor: 'pointer',
               }}
-            />
+            >
+              <option value="">-- Select Time --</option>
+              {generateTimeOptions()}
+            </select>
           </div>
 
           <button
@@ -212,6 +230,24 @@ function App() {
             >
               Pay Now
             </button>
+            <button
+              onClick={handleEditAppointment}
+              type="button"
+              style={{
+                marginTop: '0.5rem',
+                backgroundColor: '#ccc',
+                color: '#333',
+                padding: '0.6rem 1rem',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '0.95rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                width: '100%',
+              }}
+            >
+              Change Date & Time
+            </button>
           </div>
         )}
 
@@ -243,4 +279,3 @@ function App() {
 }
 
 export default App;
-
