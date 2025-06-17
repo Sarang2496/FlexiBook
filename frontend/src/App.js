@@ -1,65 +1,91 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 function App() {
-  const [time, setTime] = useState("");
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
   const [appointment, setAppointment] = useState(null);
-  const [paymentDone, setPaymentDone] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [paymentDone, setPaymentDone] = useState(false);
 
   const doctor = {
-    name: "Dr. M. Badarinarayan Setty",
-    specialization: "Paediatrician",
-    experience: "30+ years",
-    clinic: "Manasali Children Clinic, Hubbali",
+    name: 'Dr. M. Badarinarayan Setty',
+    specialization: 'Paediatrician',
+    experience: '30+ years',
+    clinic: 'Manasali Children Clinic, Hubbali'
   };
 
   const handleBooking = (e) => {
     e.preventDefault();
-    if (!time) return alert("Please select a time.");
-    setAppointment({ doctor: doctor.name, time });
-    setShowPayment(true);  // Show payment section now
+
+    if (!date || !time) {
+      alert('Please select both date and time.');
+      return;
+    }
+
+    const appointmentDateTime = new Date(`${date}T${time}`);
+    const now = new Date();
+
+    if (appointmentDateTime < now) {
+      alert('Cannot book appointment in the past.');
+      return;
+    }
+
+    setAppointment({ doctor: doctor.name, time: appointmentDateTime.toISOString() });
+
+    // Show payment form now
+    setShowPayment(true);
+    setPaymentDone(false);
+
+    // Clear inputs after booking
+    setDate('');
+    setTime('');
   };
 
   const handlePayment = () => {
-    // Here you would integrate payment gateway logic (Stripe, PayPal, etc)
+    // Here you'd integrate real payment logic.
     // For now, just simulate payment success:
     setPaymentDone(true);
     setShowPayment(false);
-    setTime("");
   };
+
+  // Format appointment time for display
+  const formattedAppointmentTime = appointment
+    ? new Date(appointment.time).toLocaleString()
+    : '';
+
+  // Today's date in YYYY-MM-DD format for min attribute
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div
       style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right, #e0f7fa, #f1f8e9)",
-        padding: "2rem",
-        fontFamily: "Arial, sans-serif",
+        minHeight: '100vh',
+        background: 'linear-gradient(to right, #e0f7fa, #f1f8e9)',
+        padding: '2rem',
+        fontFamily: 'Arial, sans-serif'
       }}
     >
       <div
         style={{
-          maxWidth: "500px",
-          margin: "2rem auto",
-          background: "white",
-          borderRadius: "12px",
-          padding: "2rem",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          maxWidth: '500px',
+          margin: '2rem auto',
+          background: 'white',
+          borderRadius: '12px',
+          padding: '2rem',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
         }}
       >
         {/* Doctor Details */}
         <div
           style={{
-            padding: "1rem",
-            border: "1px solid #4CAF50",
-            borderRadius: "8px",
-            backgroundColor: "#e8f5e9",
-            marginBottom: "1.5rem",
+            padding: '1rem',
+            border: '1px solid #4CAF50',
+            borderRadius: '8px',
+            backgroundColor: '#e8f5e9',
+            marginBottom: '1.5rem'
           }}
         >
-          <h2 style={{ margin: "0 0 0.5rem 0", color: "#2e7d32" }}>
-            {doctor.name}
-          </h2>
+          <h2 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>{doctor.name}</h2>
           <p>
             <strong>Specialization:</strong> {doctor.specialization}
           </p>
@@ -71,55 +97,86 @@ function App() {
           </p>
         </div>
 
-        {/* Booking Form */}
+        {/* Booking Form - show only if payment NOT showing and payment not done */}
         {!showPayment && !paymentDone && (
           <form onSubmit={handleBooking}>
-            <div style={{ marginBottom: "1rem" }}>
+            <div style={{ marginBottom: '1rem' }}>
+              <label
+                htmlFor="appointment-date"
+                style={{
+                  display: 'block',
+                  fontWeight: 'bold',
+                  marginBottom: '0.5rem',
+                  color: '#2e7d32'
+                }}
+              >
+                📅 Select Appointment Date:
+              </label>
+              <input
+                id="appointment-date"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                min={today}
+                required
+                style={{
+                  width: '100%',
+                  padding: '0.7rem',
+                  fontSize: '1rem',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  boxSizing: 'border-box',
+                  backgroundColor: '#fefefe',
+                  color: '#333',
+                  cursor: 'pointer'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
               <label
                 htmlFor="appointment-time"
                 style={{
-                  display: "block",
-                  fontWeight: "bold",
-                  marginBottom: "0.5rem",
-                  color: "#2e7d32",
+                  display: 'block',
+                  fontWeight: 'bold',
+                  marginBottom: '0.5rem',
+                  color: '#2e7d32'
                 }}
               >
-                📅 Select Appointment Time:
+                🕒 Select Appointment Time:
               </label>
-
               <input
                 id="appointment-time"
-                type="datetime-local"
+                type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
                 required
                 style={{
-                  width: "100%",
-                  padding: "0.7rem",
-                  fontSize: "1rem",
-                  border: "1px solid #ccc",
-                  borderRadius: "8px",
-                  boxSizing: "border-box",
-                  backgroundColor: "#fefefe",
-                  color: "#333",
-                  cursor: "pointer",
+                  width: '100%',
+                  padding: '0.7rem',
+                  fontSize: '1rem',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  boxSizing: 'border-box',
+                  backgroundColor: '#fefefe',
+                  color: '#333',
+                  cursor: 'pointer'
                 }}
               />
             </div>
 
             <button
               type="submit"
-              disabled={!time}
               style={{
-                backgroundColor: "#4CAF50",
-                color: "white",
-                padding: "0.8rem 1.2rem",
-                border: "none",
-                borderRadius: "8px",
-                fontSize: "1rem",
-                fontWeight: "bold",
-                cursor: "pointer",
-                width: "100%",
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                padding: '0.8rem 1.2rem',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                width: '100%'
               }}
             >
               Book Appointment
@@ -131,29 +188,30 @@ function App() {
         {showPayment && (
           <div
             style={{
-              marginTop: "1.5rem",
-              padding: "1rem",
-              borderRadius: "8px",
-              border: "1px solid #4CAF50",
-              backgroundColor: "#fffde7",
-              color: "#827717",
+              marginTop: '1.5rem',
+              padding: '1rem',
+              borderRadius: '8px',
+              border: '1px solid #fb8c00',
+              backgroundColor: '#fff3e0',
+              color: '#ef6c00',
+              fontWeight: 'bold',
+              textAlign: 'center'
             }}
           >
             <h3>💳 Payment</h3>
             <p>Please complete your payment to confirm the appointment.</p>
-            {/* Simple Pay Now button */}
             <button
               onClick={handlePayment}
               style={{
-                backgroundColor: "#f9a825",
-                color: "white",
-                padding: "0.8rem 1.2rem",
-                border: "none",
-                borderRadius: "8px",
-                fontSize: "1rem",
-                fontWeight: "bold",
-                cursor: "pointer",
-                width: "100%",
+                backgroundColor: '#fb8c00',
+                color: 'white',
+                padding: '0.8rem 1.2rem',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                width: '100%'
               }}
             >
               Pay Now
@@ -165,14 +223,13 @@ function App() {
         {paymentDone && (
           <div
             style={{
-              marginTop: "1.5rem",
-              background: "#e6ffe6",
-              padding: "1rem",
-              borderRadius: "8px",
-              border: "1px solid #4CAF50",
-              color: "#2e7d32",
-              fontWeight: "bold",
-              textAlign: "center",
+              marginTop: '1.5rem',
+              background: '#e6ffe6',
+              padding: '1rem',
+              borderRadius: '8px',
+              border: '1px solid #4CAF50',
+              color: '#2e7d32',
+              fontWeight: 'bold'
             }}
           >
             <h4>✅ Appointment Confirmed & Paid!</h4>
@@ -180,8 +237,7 @@ function App() {
               <strong>Doctor:</strong> {appointment.doctor}
             </p>
             <p>
-              <strong>Time:</strong>{" "}
-              {new Date(appointment.time).toLocaleString()}
+              <strong>Time:</strong> {formattedAppointmentTime}
             </p>
           </div>
         )}
