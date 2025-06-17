@@ -3,20 +3,19 @@ import React, { useState } from 'react';
 function App() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [appointment, setAppointment] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
   const [paymentDone, setPaymentDone] = useState(false);
+  const [appointment, setAppointment] = useState(null);
 
   const doctor = {
     name: 'Dr. M. Badarinarayan Setty',
     specialization: 'Paediatrician',
     experience: '30+ years',
-    clinic: 'Manasali Children Clinic, Hubbali'
+    clinic: 'Manasali Children Clinic, Hubbali',
   };
 
   const handleBooking = (e) => {
     e.preventDefault();
-
     if (!date || !time) {
       alert('Please select both date and time.');
       return;
@@ -31,30 +30,19 @@ function App() {
     }
 
     setAppointment({ doctor: doctor.name, time: appointmentDateTime.toISOString() });
-
-    // Show payment form now
     setShowPayment(true);
     setPaymentDone(false);
-
-    // Clear inputs after booking
-    setDate('');
-    setTime('');
   };
 
   const handlePayment = () => {
-    // Here you'd integrate real payment logic.
-    // For now, just simulate payment success:
+    // Simulate payment success here
     setPaymentDone(true);
-    setShowPayment(false);
   };
 
-  // Format appointment time for display
+  const today = new Date().toISOString().split('T')[0];
   const formattedAppointmentTime = appointment
     ? new Date(appointment.time).toLocaleString()
     : '';
-
-  // Today's date in YYYY-MM-DD format for min attribute
-  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div
@@ -62,7 +50,7 @@ function App() {
         minHeight: '100vh',
         background: 'linear-gradient(to right, #e0f7fa, #f1f8e9)',
         padding: '2rem',
-        fontFamily: 'Arial, sans-serif'
+        fontFamily: 'Arial, sans-serif',
       }}
     >
       <div
@@ -72,7 +60,7 @@ function App() {
           background: 'white',
           borderRadius: '12px',
           padding: '2rem',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         }}
       >
         {/* Doctor Details */}
@@ -82,7 +70,7 @@ function App() {
             border: '1px solid #4CAF50',
             borderRadius: '8px',
             backgroundColor: '#e8f5e9',
-            marginBottom: '1.5rem'
+            marginBottom: '1.5rem',
           }}
         >
           <h2 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>{doctor.name}</h2>
@@ -97,95 +85,93 @@ function App() {
           </p>
         </div>
 
-        {/* Booking Form - show only if payment NOT showing and payment not done */}
-        {!showPayment && !paymentDone && (
-          <form onSubmit={handleBooking}>
-            <div style={{ marginBottom: '1rem' }}>
-              <label
-                htmlFor="appointment-date"
-                style={{
-                  display: 'block',
-                  fontWeight: 'bold',
-                  marginBottom: '0.5rem',
-                  color: '#2e7d32'
-                }}
-              >
-                📅 Select Appointment Date:
-              </label>
-              <input
-                id="appointment-date"
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                min={today}
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.7rem',
-                  fontSize: '1rem',
-                  border: '1px solid #ccc',
-                  borderRadius: '8px',
-                  boxSizing: 'border-box',
-                  backgroundColor: '#fefefe',
-                  color: '#333',
-                  cursor: 'pointer'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label
-                htmlFor="appointment-time"
-                style={{
-                  display: 'block',
-                  fontWeight: 'bold',
-                  marginBottom: '0.5rem',
-                  color: '#2e7d32'
-                }}
-              >
-                🕒 Select Appointment Time:
-              </label>
-              <input
-                id="appointment-time"
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.7rem',
-                  fontSize: '1rem',
-                  border: '1px solid #ccc',
-                  borderRadius: '8px',
-                  boxSizing: 'border-box',
-                  backgroundColor: '#fefefe',
-                  color: '#333',
-                  cursor: 'pointer'
-                }}
-              />
-            </div>
-
-            <button
-              type="submit"
+        {/* Booking Form */}
+        <form onSubmit={handleBooking}>
+          <div style={{ marginBottom: '1rem' }}>
+            <label
+              htmlFor="appointment-date"
               style={{
-                backgroundColor: '#4CAF50',
-                color: 'white',
-                padding: '0.8rem 1.2rem',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '1rem',
+                display: 'block',
                 fontWeight: 'bold',
-                cursor: 'pointer',
-                width: '100%'
+                marginBottom: '0.5rem',
+                color: '#2e7d32',
               }}
             >
-              Book Appointment
-            </button>
-          </form>
-        )}
+              📅 Select Appointment Date:
+            </label>
+            <input
+              id="appointment-date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              min={today}
+              required
+              style={{
+                width: '100%',
+                padding: '0.7rem',
+                fontSize: '1rem',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                boxSizing: 'border-box',
+                backgroundColor: '#fefefe',
+                color: '#333',
+                cursor: 'pointer',
+              }}
+            />
+          </div>
 
-        {/* Payment Section */}
-        {showPayment && (
+          <div style={{ marginBottom: '1rem' }}>
+            <label
+              htmlFor="appointment-time"
+              style={{
+                display: 'block',
+                fontWeight: 'bold',
+                marginBottom: '0.5rem',
+                color: '#2e7d32',
+              }}
+            >
+              🕒 Select Appointment Time:
+            </label>
+            <input
+              id="appointment-time"
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '0.7rem',
+                fontSize: '1rem',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                boxSizing: 'border-box',
+                backgroundColor: '#fefefe',
+                color: '#333',
+                cursor: 'pointer',
+              }}
+            />
+          </div>
+
+          <button
+            type="submit"
+            style={{
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              padding: '0.8rem 1.2rem',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              width: '100%',
+            }}
+          >
+            Book Appointment
+          </button>
+        </form>
+
+        {/* Payment Section shown BELOW the booking form if booking clicked */}
+        {showPayment && !paymentDone && (
           <div
             style={{
               marginTop: '1.5rem',
@@ -195,7 +181,7 @@ function App() {
               backgroundColor: '#fff3e0',
               color: '#ef6c00',
               fontWeight: 'bold',
-              textAlign: 'center'
+              textAlign: 'center',
             }}
           >
             <h3>💳 Payment</h3>
@@ -211,7 +197,7 @@ function App() {
                 fontSize: '1rem',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                width: '100%'
+                width: '100%',
               }}
             >
               Pay Now
@@ -219,7 +205,7 @@ function App() {
           </div>
         )}
 
-        {/* Confirmation */}
+        {/* Confirmation shown BELOW payment section */}
         {paymentDone && (
           <div
             style={{
@@ -229,7 +215,7 @@ function App() {
               borderRadius: '8px',
               border: '1px solid #4CAF50',
               color: '#2e7d32',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
             }}
           >
             <h4>✅ Appointment Confirmed & Paid!</h4>
